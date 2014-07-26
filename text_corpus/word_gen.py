@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from os import listdir, path
 from os.path import isfile, join
 import re, pickle
@@ -31,4 +33,4 @@ large = sorted_words[64:]
 large = [word for word in large if len(word) > 2]
 small.extend(large)
 
-pickle.dump(small, open("sortedWords.p", "wb"))
+pickle.dump(small, open("../sortedWords.p", "wb"))
