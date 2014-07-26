@@ -10,28 +10,28 @@ LARGE_MAP_SIZE = 16383
 
 # Write the beginning of the file
 file = open("word_maps.cpp", "w")
-file.write("#include <map>\n")
-file.write("#include <string>\n")
+file.write("#include \"word_maps.hpp\"\n")
 
-file.write("std::map<std::string, int> short_map = {")
+file.write("std::map<std::string, int> byteme::short_map = {")
 
 i = 0
 while i < SMALL_MAP_SIZE:
-    file.write("{\"" + words[i] + "\"," + str(i) + "},")
+    file.write("{\"" + words[i] + "\"," + str(i + 1) + "},")
     i += 1
-file.write("{\"" + words[i] + "\"," + str(i) + "}};\n")
+file.write("{\"" + words[i] + "\"," + str(i + 1) + "}};\n")
 i += 1
 
 j = 0
-file.write("std::map<std::string, int> long_map = {")
+file.write("std::map<std::string, int> byteme::long_map = {")
 while j < LARGE_MAP_SIZE:
-    file.write("{\"" + words[i] + "\"," + str(j) + "},")
+    file.write("{\"" + words[i] + "\"," + str(j + 1) + "},")
     i += 1
     j += 1
-file.write("{\"" + words[i] + "\"," + str(j) + "}};\n")
+file.write("{\"" + words[i] + "\"," + str(j + 1) + "}};\n")
 
 i = 0
-file.write("const string small_decode_array[] = {")
+short_size = (1 << 6)
+file.write("const std::string byteme::short_decode_array[%d] = {" % short_size)
 while i < SMALL_MAP_SIZE:
     file.write("\"" + words[i] + "\",")
     i += 1
@@ -39,7 +39,8 @@ file.write("\"" + words[i] + "\"};\n")
 i+= 1
 
 j = 0
-file.write("const string large_decode_array[] = {")
+long_size = (1 << 14)
+file.write("const std::string byteme::long_decode_array[%d] = {" % long_size)
 while j < LARGE_MAP_SIZE:
     file.write("\"" + words[i] + "\",")
     i += 1

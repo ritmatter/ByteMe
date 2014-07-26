@@ -10,4 +10,5 @@ int main()
 {
     sstring hi("banana");
     cout << long_map["longer"] << endl;
+    cout << long_decode_array[305] << endl;
 }
