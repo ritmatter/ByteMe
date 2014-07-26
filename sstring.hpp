@@ -1,5 +1,5 @@
-#ifndef BYTEME_SSTRING_HPP
-#define BYTEME_SSTRING_HPP
+#ifndef BYTEME_SSTRING_HPP_
+#define BYTEME_SSTRING_HPP_
 
 #include <cstring>
 
@@ -39,4 +39,4 @@ private:
 
 }
 
-#endif
+#endif // BYTEME_SSTRING_HPP_
