@@ -23,7 +23,12 @@ for word in word_list:
 	else:
 		word_freq[word] = 1
 
-sorted_words = [word for word in word_freq.keys()]
+sorted_words = [word for word in word_freq.keys() if len(word) > 1]
 sorted_words = sorted(sorted_words, key=lambda x: -word_freq[x])
 
-pickle.dump(sorted_words, open("sortedWords.p", "wb"))
+small = sorted_words[:64]
+large = sorted_words[64:]
+large = [word for word in large if len(word) > 2]
+small.extend(large)
+
+pickle.dump(small, open("sortedWords.p", "wb"))
