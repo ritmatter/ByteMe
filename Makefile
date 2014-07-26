@@ -14,9 +14,9 @@ HEADERFILES = sstring.hpp \
 	@echo 'Compiling $<'
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 
-main: main.o sstring.o word_maps.o
+compressor: compressor.o sstring.o word_maps.o
 	@echo 'Linking $<'
-	@$(CXX) -o main $^ $(LDFLAGS)
+	@$(CXX) -o compressor $^ $(LDFLAGS)
 
 all: main
 
