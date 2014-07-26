@@ -13,16 +13,22 @@ sstring::sstring() {
 
 }
 
-sstring::sstring(std::string data) : sstring(data.c_str()) {
+sstring::sstring(std::string from) : sstring(from.c_str()) {
 
 }
 
-sstring::sstring(const char *data) {
-    (void) data;
+sstring::sstring(const char *from) {
 #ifdef DEBUG
-    assert(is_ascii(data));
+    assert(is_ascii(from));
 #endif
-    encode(data);
+    encode(from);
+}
+
+sstring::sstring(const char *from, size_t length) {
+#ifdef DEBUG
+    assert(is_ascii(from));
+#endif
+    encode(from, length);
 }
 
 inline bool sstring::is_alphanumeric(char c) {
@@ -31,8 +37,48 @@ inline bool sstring::is_alphanumeric(char c) {
             || ('0' <= c && c <= '9'));
 }
 
-void sstring::encode(const char *data) {
-    const char *current = data;
+void sstring::encode(const char *from, size_t length) {
+    const char *current = from;
+    const char *eof = from + length;
+    while (current != eof) {
+        if (is_alphanumeric(*current)) {
+            const char *end = current + 1;
+            while (is_alphanumeric(*end)) {
+                end++;
+            }
+            // region is [current, end)
+            std::string lookup(current, end - current);
+#ifdef DEBUG
+            std::cout << "Looking up <" << lookup << ">" << std::endl;
+#endif
+            int key;
+            if ((key = short_map[lookup]) != 0) {
+                // encode word, point current to next part
+                char encoding = 0x80 | ((key - 1) & 0x3f);
+                buf.push_back(encoding);
+                current = end;
+            } else if ((key = long_map[lookup]) != 0) {
+                // encode word, point current to next part
+                char first_byte = 0xc0 | (((key - 1) >> 8) & 0x3f);
+                char second_byte = (key - 1) & 0xff;
+                buf.push_back(first_byte);
+                buf.push_back(second_byte);
+                current = end;
+            } else {
+                // encode single character
+                buf.push_back(*current);
+                current++;
+            }
+        } else {
+            // encode single character
+            buf.push_back(*current);
+            current++;
+        }
+    }
+}
+
+void sstring::encode(const char *from) {
+    const char *current = from;
     while (*current != '\0') {
         if (is_alphanumeric(*current)) {
             const char *end = current + 1;
@@ -70,10 +116,10 @@ void sstring::encode(const char *data) {
     }
 }
 
-std::string sstring::decode() {
+std::string sstring::decode(const char *from, size_t length) {
     std::vector<char> output;
-    for (size_t i = 0; i < buf.size(); i++) {
-        char current = buf[i];
+    for (size_t i = 0; i < length; i++) {
+        char current = from[i];
         if ((current & ~0x7f) == 0) {
             output.push_back(current);
         } else if (((current & 0xc0) >> 6) == 0x02) {
@@ -85,9 +131,9 @@ std::string sstring::decode() {
         } else {
             // double byte encoding
 #ifdef DEBUG
-            assert(i < buf.size() - 1);
+            assert(i < length - 1);
 #endif
-            int index = ((static_cast<int>(current & 0x3f) & 0xff) << 8) | (static_cast<int>(buf[i + 1]) & 0xff);
+            int index = ((static_cast<int>(current & 0x3f) & 0xff) << 8) | (static_cast<int>(from[i + 1]) & 0xff);
             for (char c : long_decode_array[index]) {
                 output.push_back(c);
             }
@@ -97,14 +143,18 @@ std::string sstring::decode() {
     return std::string(output.data(), output.size());
 }
 
-size_t sstring::bufferSize() {
+std::string sstring::decode() {
+    return sstring::decode(buf.data(), buf.size());
+}
+
+size_t sstring::size() {
     return buf.size();
 }
 
 #ifdef DEBUG
-bool sstring::is_ascii(const char *data) {
-    for (; *data != '\0'; data++) {
-        if ((*data & ~0x7f) != 0) {
+bool sstring::is_ascii(const char *from) {
+    for (; *from != '\0'; from++) {
+        if ((*from & ~0x7f) != 0) {
             // high order bit is set
             return false;
         }
@@ -112,6 +162,10 @@ bool sstring::is_ascii(const char *data) {
     return true;
 }
 #endif
+
+const char *sstring::data() {
+    return buf.data();
+}
 
 sstring::~sstring() {
 

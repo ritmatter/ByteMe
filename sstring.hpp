@@ -20,10 +20,12 @@ class sstring {
 
 private:
 
-    void encode(const char *data);
+    void encode(const char *from);
+
+    void encode(const char *from, size_t length);
 
 #ifdef DEBUG
-    bool is_ascii(const char *data);
+    bool is_ascii(const char *from);
 #endif
 
     inline bool is_alphanumeric(char c);
@@ -32,15 +34,21 @@ public:
 
     sstring();
 
-    sstring(std::string data);
+    sstring(std::string from);
 
-    sstring(const char *data);
+    sstring(const char *from);
+
+    sstring(const char *from, size_t length);
 
     std::string decode();
 
+    static std::string decode(const char *from, size_t length);
+
     ~sstring();
 
-    size_t bufferSize();
+    size_t size();
+
+    const char *data();
 
 private:
 
