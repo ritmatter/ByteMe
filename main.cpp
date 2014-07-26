@@ -7,5 +7,5 @@ using namespace std;
 
 int main()
 {
-
+    sstring hi("banana");
 }

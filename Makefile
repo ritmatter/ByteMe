@@ -13,7 +13,7 @@ HEADERFILES = sstring.hpp
 	@echo 'Compiling $<'
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 
-main: main.o
+main: main.o sstring.o
 	@echo 'Linking $<'
 	@$(CXX) -o main $^ $(LDFLAGS)
 
