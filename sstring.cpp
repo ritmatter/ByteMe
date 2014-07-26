@@ -2,10 +2,7 @@
 
 using namespace byteme;
 
-sstring::sstring(const char *data) {
-    // remove next two lines
-    buf = nullptr;
-    buf_len = 0;
+sstring::sstring(const char *data) : buf(nullptr), buf_len(0) {
 #ifdef DEBUG
     assert(is_ascii(data));
 #endif
