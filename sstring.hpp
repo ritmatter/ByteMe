@@ -1,6 +1,8 @@
 #ifndef BYTEME_SSTRING_HPP_
 #define BYTEME_SSTRING_HPP_
 
+#include <vector>
+#include <string>
 #include <cstring>
 
 #ifdef DEBUG
@@ -24,16 +26,26 @@ private:
     bool is_ascii(const char *data);
 #endif
 
+    inline bool is_alphanumeric(char c);
+
 public:
+
+    sstring();
+
+    sstring(std::string data);
 
     sstring(const char *data);
 
+    std::string decode();
+
     ~sstring();
+
+    size_t bufferSize();
 
 private:
 
-    char *buf;
-    size_t buf_len;
+    // TODO replace with char*
+    std::vector<char> buf;
 
 };
 
