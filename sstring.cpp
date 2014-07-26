@@ -3,6 +3,7 @@
 using namespace byteme;
 
 sstring::sstring(const char *data) : buf(nullptr), buf_len(0) {
+    (void) data;
 #ifdef DEBUG
     assert(is_ascii(data));
 #endif

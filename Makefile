@@ -7,13 +7,14 @@ else
 	CXXFLAGS += -DNDEBUG
 endif
 
-HEADERFILES = sstring.hpp
+HEADERFILES = sstring.hpp \
+			  word_maps.hpp
 
 %.o: %.cpp $(HEADERFILES)
 	@echo 'Compiling $<'
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 
-main: main.o sstring.o
+main: main.o sstring.o word_maps.o
 	@echo 'Linking $<'
 	@$(CXX) -o main $^ $(LDFLAGS)
 
