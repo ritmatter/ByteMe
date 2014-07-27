@@ -49,7 +49,7 @@ public:
 
     sstring operator+(const sstring &that);
 
-    friend std::ostream &operator<<(std::ostream &out, sstring &ss);
+    friend std::ostream &operator<<(std::ostream &out, sstring ss);
 
     ~sstring();
 

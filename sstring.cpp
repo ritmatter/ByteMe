@@ -179,7 +179,7 @@ sstring sstring::operator+(const sstring &that) {
     return sstring(std::move(concatenated));
 }
 
-std::ostream &operator<<(std::ostream &out, sstring &ss) {
+std::ostream &operator<<(std::ostream &out, sstring ss) {
     out << ss.decode();
     return out;
 }
