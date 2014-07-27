@@ -5,9 +5,9 @@
 ##### Palantir Hackathon, 7/26/14
 
 **Note: This proof-of-concept hack was conceived and written in a period of
-less than 7 hours.** For a better implementation for real-world usage, we are
-looking into designing a more general-purpose homomorphic compression scheme,
-taking inspiration from techniques such as airthmetic coding.
+less than 7 hours.** For a better implementation more applicable to real-world 
+usage, we are looking into designing a more general-purpose homomorphic 
+compression scheme, taking inspiration from techniques such as airthmetic coding.
 
 ## Summary
 
