@@ -181,6 +181,66 @@ std::ostream &operator<<(std::ostream &out, sstring &ss) {
 }
 
 sstring sstring::substr(size_t position, size_t length) {
+    size_t here = 0;
+    size_t count = 0;
+    std::vector<char> output;
+    std::string left_word;
+
+    while (count < position && here < buf.size()){
+        left = buf[here]
+        if((left & Oxff) >> 6 == 0x03){
+            int index = (static_cast<int>(left & 0x3f) & 0xff) << 8) | (static_cast<int>(buf[here + 1]) & 0xff;
+            left_word = long_decode_array[index];
+            count += left_word.size();
+            here += 2;
+        } else if(((left & 0xc0) >> 6) == 0x02){
+            int index = left & 0x3f;
+            left_word = short_decode_array[index];
+            count += left_word.size();
+            here++;
+        } else{
+            here++;
+        }
+    }
+
+    if (count > position){
+        int counter2 = count - left_word.size();
+        for (char c : left_word) {
+            if (counter2 >= position and output.size() < length){
+                output.push_back(c)
+            }
+            counter2++;
+        }
+    }
+
+    while(output.size() < length){
+        left = buf[here]
+        if((left & Oxff) >> 6 == 0x03){
+            int index = (static_cast<int>(left & 0x3f) & 0xff) << 8) | (static_cast<int>(buf[here + 1]) & 0xff;
+            std::string left_word = long_decode_array[index];
+            for (char c : left_word){
+                if(output.size() < length){
+                    output.push_back(c)
+                }
+            }
+            here += 2;
+        } else if(((left & 0xc0) >> 6) == 0x02){
+            int index = left & 0x3f;
+            std::string left_word = short_decode_array[index];
+            for (char c : left_word){
+                if(output.size() < length){
+                    output.push_back(c)
+                }
+            }
+            here++;
+        } else{
+            here++;
+        }
+
+    }
+
+    return sstring(std::move(output))
+
 
 }
 
