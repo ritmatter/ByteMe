@@ -23,4 +23,7 @@ int main()
     cout << (hello < hello) << endl; // should be false
     cout << (hello < (hel + lo)) << endl; // should be false
     cout << ((hel + lo) < hello) << endl; // should be false
+
+    cout << (hello == (hel + lo)) << endl; // should be true
+    cout << (hello == world) << endl; // should be false
 }
