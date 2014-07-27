@@ -59,6 +59,12 @@ public:
 
     bool operator<(const sstring &that);
 
+    // bool operator>(const sstring &that);
+
+    // bool operator>=(const sstring &that);
+
+    bool operator<=(const sstring &that);
+
     bool operator==(const sstring &that);
 
     sstring substr(size_t position, size_t length);

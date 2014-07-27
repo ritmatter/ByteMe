@@ -479,6 +479,10 @@ bool sstring::operator==(const sstring &that) {
     return (here >= buf.size() && there >= that.buf.size());
 }
 
+bool sstring::operator<=(const sstring &that){
+    return (*this < that) || (*this == that);
+}
+
 sstring sstring::substr(size_t position, size_t length) {
     size_t here = 0;
     size_t count = 0;
