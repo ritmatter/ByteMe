@@ -55,7 +55,7 @@ void sstring::encode(const char *from, size_t length) {
             // region is [current, end)
             std::string lookup(current, end - current);
 #ifdef DEBUG
-            std::cout << "Looking up <" << lookup << ">" << std::endl;
+            std::cerr << "Looking up <" << lookup << ">" << std::endl;
 #endif
             int key;
             if ((key = short_map[lookup]) != 0) {
@@ -94,7 +94,7 @@ void sstring::encode(const char *from) {
             // region is [current, end)
             std::string lookup(current, end - current);
 #ifdef DEBUG
-            std::cout << "Looking up <" << lookup << ">" << std::endl;
+            std::cerr << "Looking up <" << lookup << ">" << std::endl;
 #endif
             int key;
             if ((key = short_map[lookup]) != 0) {
@@ -127,15 +127,24 @@ std::string sstring::decode(const char *from, size_t length) {
     for (size_t i = 0; i < length; i++) {
         char current = from[i];
         if ((current & ~0x7f) == 0) {
+#ifdef DEBUG
+            std::cerr << "decoding ascii" << std::endl;
+#endif
             output.push_back(current);
         } else if (((current & 0xc0) >> 6) == 0x02) {
             // single byte encoding
+#ifdef DEBUG
+            std::cerr << "decoding single byte" << std::endl;
+#endif
             int index = current & 0x3f;
             for (char c : short_decode_array[index]) {
                 output.push_back(c);
             }
         } else {
             // double byte encoding
+#ifdef DEBUG
+            std::cerr << "decoding double byte" << std::endl;
+#endif
 #ifdef DEBUG
             assert(i < length - 1);
 #endif
@@ -187,72 +196,117 @@ std::ostream &operator<<(std::ostream &out, sstring ss) {
 bool sstring::operator<(const sstring &that) {
     size_t here = 0, there = 0;
     size_t hs = 0, ts = 0;
+#ifdef DEBUG
+    std::cerr << buf.size() << std::endl;
+#endif
     while (here < buf.size() && there < that.buf.size()) {
+#ifdef DEBUG
+    std::cerr << here << std::endl;
+#endif
         int l = buf[here] & 0xff;
+#ifdef DEBUG
+        std::cerr << "l to int at here: " << here << " l: " << l << std::endl;
+#endif
         int r = that.buf[there] & 0xff;
 
+        bool cont = false;
+        int cont_here_incr = 0;
+        int cont_there_incr = 0;
+
         // compute left char
-        char lc;
+        char lc = '\0';
         bool increment_hs = false;
         bool increment_here = false;
         if ((l & ~0x7f) == 0) {
             // ascii
+#ifdef DEBUG
+            std::cerr << "lc ascii" << std::endl;
+#endif
             lc = buf[here];
             increment_here = true;
-        } else if ((l & 0xff >> 6) == 0x02) {
+        } else if ((l & 0xc0 >> 6) == 0x02) {
             // single byte encoding
+#ifdef DEBUG
+            std::cerr << "lc single byte: " << std::endl;
+#endif
             int index = buf[here] & 0x3f;
             const std::string &lstr = short_decode_array[index];
             if (hs >= lstr.size()) {
                 hs = 0;
                 here++;
-                continue;
+                cont = true;
+                cont_here_incr = 1;
+            } else {
+                increment_hs = true;
+                lc = lstr[hs];
             }
-            increment_hs = true;
-            lc = lstr[hs];
         } else {
             // two byte encoding
+#ifdef DEBUG
+            std::cerr << "lc double byte" << std::endl;
+#endif
             int index = ((static_cast<int>(buf[here] & 0x3f) & 0xff) << 8) | (static_cast<int>(buf[here + 1]) & 0xff);
             const std::string &lstr = long_decode_array[index];
             if (hs >= lstr.size()) {
                 hs = 0;
                 here += 2;
-                continue;
+                cont = true;
+                cont_here_incr = 2;
+            } else {
+                increment_hs = true;
+                lc = lstr[hs];
             }
-            increment_hs = true;
-            lc = lstr[hs];
         }
 
         // compute right char
-        char rc;
+        char rc = '\0';
         bool increment_ts = false;
         bool increment_there = false;
         if ((r & ~0x7f) == 0) {
             // ascii
+#ifdef DEBUG
+            std::cerr << "rc ascii" << std::endl;
+#endif
             rc = that.buf[there];
             increment_there = true;
-        } else if ((r & 0xff >> 6) == 0x02) {
+        } else if ((r & 0xc0 >> 6) == 0x02) {
             // single byte encoding
+#ifdef DEBUG
+            std::cerr << "rc single byte" << std::endl;
+#endif
             int index = that.buf[there] & 0x3f;
             const std::string &rstr = short_decode_array[index];
             if (ts >= rstr.size()) {
                 ts = 0;
                 there++;
-                continue;
+                cont = true;
+                cont_there_incr = 1;
+            } else {
+                increment_ts = true;
+                rc = rstr[ts];
             }
-            increment_ts = true;
-            rc = rstr[ts];
         } else {
             // two byte encoding
+#ifdef DEBUG
+            std::cerr << "rc double byte" << std::endl;
+#endif
             int index = ((static_cast<int>(that.buf[there] & 0x3f) & 0xff) << 8) | (static_cast<int>(that.buf[there + 1]) & 0xff);
             const std::string rstr = long_decode_array[index];
             if (ts >= rstr.size()) {
                 ts = 0;
                 there += 2;
-                continue;
+                cont = true;
+                cont_there_incr = 2;
+            } else {
+                increment_ts = true;
+                rc = rstr[ts];
             }
-            increment_ts = true;
-            rc = rstr[ts];
+        }
+
+        if (cont) {
+            here += cont_here_incr;
+            there += cont_there_incr;
+            continue;
         }
 
         if (increment_here) {
@@ -267,82 +321,141 @@ bool sstring::operator<(const sstring &that) {
         if (increment_ts) {
             ts++;
         }
+#ifdef DEBUG
+        std::cerr << "comparing " << lc << " with " << rc << std::endl;
+#endif
         if (lc != rc) {
+#ifdef DEBUG
+            std::cerr << "equals detected difference: " << lc << " <? " << rc << std::endl;
+#endif
             return lc < rc;
         }
     }
-    return false;
+#ifdef DEBUG
+    std::cerr << "equals reached end of buffer" << std::endl;
+#endif
+
+    if (here >= buf.size() && there >= that.buf.size()) {
+        return false;
+    } else {
+        return here >= buf.size();
+    }
 }
 
 bool sstring::operator==(const sstring &that) {
     size_t here = 0, there = 0;
     size_t hs = 0, ts = 0;
+#ifdef DEBUG
+    std::cerr << buf.size() << std::endl;
+#endif
     while (here < buf.size() && there < that.buf.size()) {
+#ifdef DEBUG
+    std::cerr << here << std::endl;
+#endif
         int l = buf[here] & 0xff;
+#ifdef DEBUG
+        std::cerr << "l to int at here: " << here << " l: " << l << std::endl;
+#endif
         int r = that.buf[there] & 0xff;
 
+        bool cont = false;
+        int cont_here_incr = 0;
+        int cont_there_incr = 0;
+
         // compute left char
-        char lc;
+        char lc = '\0';
         bool increment_hs = false;
         bool increment_here = false;
         if ((l & ~0x7f) == 0) {
             // ascii
+#ifdef DEBUG
+            std::cerr << "lc ascii" << std::endl;
+#endif
             lc = buf[here];
             increment_here = true;
-        } else if ((l & 0xff >> 6) == 0x02) {
+        } else if ((l & 0xc0 >> 6) == 0x02) {
             // single byte encoding
+#ifdef DEBUG
+            std::cerr << "lc single byte: " << std::endl;
+#endif
             int index = buf[here] & 0x3f;
             const std::string &lstr = short_decode_array[index];
             if (hs >= lstr.size()) {
                 hs = 0;
                 here++;
-                continue;
+                cont = true;
+                cont_here_incr = 1;
+            } else {
+                increment_hs = true;
+                lc = lstr[hs];
             }
-            increment_hs = true;
-            lc = lstr[hs];
         } else {
             // two byte encoding
+#ifdef DEBUG
+            std::cerr << "lc double byte" << std::endl;
+#endif
             int index = ((static_cast<int>(buf[here] & 0x3f) & 0xff) << 8) | (static_cast<int>(buf[here + 1]) & 0xff);
             const std::string &lstr = long_decode_array[index];
             if (hs >= lstr.size()) {
                 hs = 0;
                 here += 2;
-                continue;
+                cont = true;
+                cont_here_incr = 2;
+            } else {
+                increment_hs = true;
+                lc = lstr[hs];
             }
-            increment_hs = true;
-            lc = lstr[hs];
         }
 
         // compute right char
-        char rc;
+        char rc = '\0';
         bool increment_ts = false;
         bool increment_there = false;
         if ((r & ~0x7f) == 0) {
             // ascii
+#ifdef DEBUG
+            std::cerr << "rc ascii" << std::endl;
+#endif
             rc = that.buf[there];
             increment_there = true;
-        } else if ((r & 0xff >> 6) == 0x02) {
+        } else if ((r & 0xc0 >> 6) == 0x02) {
             // single byte encoding
+#ifdef DEBUG
+            std::cerr << "rc single byte" << std::endl;
+#endif
             int index = that.buf[there] & 0x3f;
             const std::string &rstr = short_decode_array[index];
             if (ts >= rstr.size()) {
                 ts = 0;
                 there++;
-                continue;
+                cont = true;
+                cont_there_incr = 1;
+            } else {
+                increment_ts = true;
+                rc = rstr[ts];
             }
-            increment_ts = true;
-            rc = rstr[ts];
         } else {
             // two byte encoding
+#ifdef DEBUG
+            std::cerr << "rc double byte" << std::endl;
+#endif
             int index = ((static_cast<int>(that.buf[there] & 0x3f) & 0xff) << 8) | (static_cast<int>(that.buf[there + 1]) & 0xff);
             const std::string rstr = long_decode_array[index];
             if (ts >= rstr.size()) {
                 ts = 0;
                 there += 2;
-                continue;
+                cont = true;
+                cont_there_incr = 2;
+            } else {
+                increment_ts = true;
+                rc = rstr[ts];
             }
-            increment_ts = true;
-            rc = rstr[ts];
+        }
+
+        if (cont) {
+            here += cont_here_incr;
+            there += cont_there_incr;
+            continue;
         }
 
         if (increment_here) {
@@ -357,11 +470,21 @@ bool sstring::operator==(const sstring &that) {
         if (increment_ts) {
             ts++;
         }
+#ifdef DEBUG
+        std::cerr << "comparing " << lc << " with " << rc << std::endl;
+#endif
         if (lc != rc) {
+#ifdef DEBUG
+            std::cerr << "equals detected difference: " << lc << " != " << rc << std::endl;
+#endif
             return false;
         }
     }
-    return true;
+#ifdef DEBUG
+    std::cerr << "equals reached end of buffer" << std::endl;
+#endif
+
+    return (here >= buf.size() && there >= that.buf.size());
 }
 
 sstring sstring::substr(size_t position, size_t length) {
