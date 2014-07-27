@@ -1,6 +1,7 @@
 # Main binary output
 compressor
 concat
+compare
 
 # Object files
 *.o

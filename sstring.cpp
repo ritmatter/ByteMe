@@ -4,6 +4,10 @@
 #include <string>
 #include <utility>
 
+#ifdef DEBUG
+#include <iostream>
+#endif
+
 namespace byteme
 {
 
@@ -181,15 +185,104 @@ std::ostream &operator<<(std::ostream &out, sstring &ss) {
 }
 
 sstring sstring::substr(size_t position, size_t length) {
-
+    (void) position;
+    (void) length;
+    return sstring();
 }
 
 bool sstring::operator<(const sstring &that) {
+    size_t here = 0, there = 0;
+    size_t hs = 0, ts = 0;
+    while (here < buf.size() && there < that.buf.size()) {
+        int l = buf[here] & 0xff;
+        int r = that.buf[there] & 0xff;
 
+        // compute left char
+        char lc;
+        bool increment_hs = false;
+        bool increment_here = false;
+        if ((l & ~0x7f) == 0) {
+            // ascii
+            lc = buf[here];
+            increment_here = true;
+        } else if ((l & 0xff >> 6) == 0x02) {
+            // single byte encoding
+            int index = buf[here] & 0x3f;
+            const std::string &lstr = short_decode_array[index];
+            if (hs >= lstr.size()) {
+                hs = 0;
+                here++;
+                continue;
+            }
+            increment_hs = true;
+            lc = lstr[hs];
+        } else {
+            // two byte encoding
+            int index = ((static_cast<int>(buf[here] & 0x3f) & 0xff) << 8) | (static_cast<int>(buf[here + 1]) & 0xff);
+            const std::string &lstr = long_decode_array[index];
+            if (hs >= lstr.size()) {
+                hs = 0;
+                here += 2;
+                continue;
+            }
+            increment_hs = true;
+            lc = lstr[hs];
+        }
+
+        // compute right char
+        char rc;
+        bool increment_ts = false;
+        bool increment_there = false;
+        if ((r & ~0x7f) == 0) {
+            // ascii
+            rc = that.buf[there];
+            increment_there = true;
+        } else if ((r & 0xff >> 6) == 0x02) {
+            // single byte encoding
+            int index = that.buf[there] & 0x3f;
+            const std::string &rstr = short_decode_array[index];
+            if (ts >= rstr.size()) {
+                ts = 0;
+                there++;
+                continue;
+            }
+            increment_ts = true;
+            rc = rstr[ts];
+        } else {
+            // two byte encoding
+            int index = ((static_cast<int>(that.buf[there] & 0x3f) & 0xff) << 8) | (static_cast<int>(that.buf[there + 1]) & 0xff);
+            const std::string rstr = long_decode_array[index];
+            if (ts >= rstr.size()) {
+                ts = 0;
+                there += 2;
+                continue;
+            }
+            increment_ts = true;
+            rc = rstr[ts];
+        }
+
+        if (increment_here) {
+            here++;
+        }
+        if (increment_there) {
+            there++;
+        }
+        if (increment_hs) {
+            hs++;
+        }
+        if (increment_ts) {
+            ts++;
+        }
+        if (lc != rc) {
+            return lc < rc;
+        }
+    }
+    return false;
 }
 
 bool sstring::operator==(const sstring &that) {
-
+    (void) that;
+    return false;
 }
 
 sstring::~sstring() {

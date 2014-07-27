@@ -14,7 +14,7 @@ HEADERFILES = sstring.hpp \
 	@echo 'Compiling $<'
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 
-all: compressor concat
+all: compressor concat compare
 
 compressor: compressor.o sstring.o word_maps.o
 	@echo 'Linking $<'
@@ -23,6 +23,10 @@ compressor: compressor.o sstring.o word_maps.o
 concat: concat.o sstring.o word_maps.o
 	@echo 'Linking $<'
 	@$(CXX) -o concat $^ $(LDFLAGS)
+
+compare: compare.o sstring.o word_maps.o
+	@echo 'Linking $<'
+	@$(CXX) -o compare $^ $(LDFLAGS)
 
 .PHONY: clean
 clean:
