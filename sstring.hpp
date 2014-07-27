@@ -57,8 +57,6 @@ public:
 
     const char *data();
 
-    sstring substr(size_t position, size_t length);
-
     bool operator<(const sstring &that);
 
     bool operator==(const sstring &that);
