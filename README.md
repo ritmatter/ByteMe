@@ -7,7 +7,7 @@
 **Note: This proof-of-concept hack was conceived and written in a period of
 less than 7 hours.** For a better implementation more applicable to real-world 
 usage, we are looking into designing a more general-purpose homomorphic 
-compression scheme, taking inspiration from techniques such as airthmetic coding.
+compression scheme, taking inspiration from techniques such as arithmetic coding.
 
 ## Summary
 
@@ -83,5 +83,5 @@ This trade-off in space more than makes up for itself with the advantage of
 homomorphic compression. Compressed strings can be compared, concatenated, and
 searched in the same asymptotic time as their uncompressed counterparts.
 Moreover, these operations do NOT require the data to be decompressed and
-recompressed during manipulation. As a result, our implementation is both CPU
+re-compressed during manipulation. As a result, our implementation is both CPU
 and memory efficient.
