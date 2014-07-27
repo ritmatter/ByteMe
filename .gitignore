@@ -2,6 +2,7 @@
 compressor
 concat
 compare
+substr
 
 # Object files
 *.o

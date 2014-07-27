@@ -15,4 +15,9 @@ int main()
     cout << "Concatenated text: " << concat << endl;
     cout << "Compressed size: " << concat.size() << endl;
     cout << "Decoded size: " << concat.decode().size() << endl;
+
+    cout << concat.substr(0, 7) << endl;
+    cout << concat.substr(1, 7) << endl;
+    cout << concat.substr(2, 7) << endl;
+    cout << concat.substr(3, 100) << endl;
 }
