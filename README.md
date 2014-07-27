@@ -1,7 +1,7 @@
 # ByteMe
 ## A Homomorphic Compression Scheme
 
-#### Anish Athalye, Nikihl Buduma, Matt Ritter
+#### Anish Athalye, Nikhil Buduma, Matt Ritter
 ##### Palantir Hackathon, 7/26/14
 
 ## Summary
