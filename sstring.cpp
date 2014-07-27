@@ -180,6 +180,18 @@ std::ostream &operator<<(std::ostream &out, sstring &ss) {
     return out;
 }
 
+sstring sstring::substr(size_t position, size_t length) {
+
+}
+
+bool sstring::operator<(const sstring &that) {
+
+}
+
+bool sstring::operator==(const sstring &that) {
+
+}
+
 sstring::~sstring() {
 
 }
