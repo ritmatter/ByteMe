@@ -61,6 +61,8 @@ public:
 
     bool operator==(const sstring &that);
 
+    sstring substr(size_t position, size_t length);
+
 private:
 
     // TODO replace with char*
