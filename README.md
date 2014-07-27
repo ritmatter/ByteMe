@@ -1,5 +1,5 @@
-ByteMe : a homomorphic compression API
-======
+ByteMe : a homomorphic compression scheme
+=============================================
 Anish Athalye, Nikihl Buduma, Matt Ritter
 Palantir Hackathon, 7/26/14
 
@@ -9,13 +9,26 @@ To tackle this problem, we created ByteMe, an API that performs homomorphic comp
 
 Words that are not in our most common caches are left uncompressed. One character words are also left uncompressed, since they would not be made smaller. Additionally addition, substrings of words that are not common will be compressed. 
 
+COMPRESSION SCHEME
 
-COMPRESSION_ANALYSIS
+Our schema involves two different lookup tables. The first contains the 64 highest priority words, determined by a combination of frequency and length. The second contains the next 16,384 highest priority words. The rest of the words we encounter are placed under the category of printable ASCII. This three categories allow us to create an encoding scheme like so:
 
-TITLE			GZIP	ByteMe
-—————————————————————————————————————————
-Pride and Prejudice 	 36%	  51%
-The Scarlet Letter	 39% 	  54%
-2BR02B			 44%	  56%
+byte boundaries
+ 
+|------| |------|
+0xxxxxxx 		 	printable ascii
+10xxxxxx 		 	frequent words 2^6 = 64
+11xxxxxx xxxxxxxx 		less frequent words 2^14 = 16384
 
-This trade-off in space more than makes up for itself with the advantage of homomorphic compression. Compressed strings can be compared, concatenated, and searched in the same asymptotic time as their uncompressed counterparts. Moreover, these operations do NOT require the data to be uncompressed and recompressed during manipulation. As a result, our implementation is both CPU and memory efficient. 
+Bytes that are encoded as printable ASCII being with a 0. Bytes beginning with a “1” exist in the lookup tables. Our 64-word lookup table lets us fit all of the highest priority words into one byte, since each word hashes to its value “10” plus the lookup value in the table. Our 16,384-word lookup table lets us fit all of the second highest priority words into two bytes, since each word hashes to its value in the table. To get back to uncompressed words, we store two arrays. A high priority word that hashes to the value “30”, for example, can be found again at the 30th index of the small array. The same technique applies to the second priority words.
+
+
+COMPRESSION ANALYSIS
+
+TITLE                 |  GZIP  |  ByteMe |
+——————————————————————|——————————————————|
+Pride and Prejudice   |   36%  |   51%	 |
+The Scarlet Letter    |   39%  |   54% 	 |
+2BR02B                |   44%  |   56%	 |
+
+This trade-off in space more than makes up for itself with the advantage of homomorphic compression. Compressed strings can be compared, concatenated, and searched in the same asymptotic time as their uncompressed counterparts. Moreover, these operations do NOT require the data to be decompressed and recompressed during manipulation. As a result, our implementation is both CPU and memory efficient.

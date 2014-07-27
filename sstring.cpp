@@ -181,7 +181,6 @@ std::ostream &operator<<(std::ostream &out, sstring &ss) {
 }
 
 sstring sstring::substr(size_t position, size_t length) {
-
 }
 
 bool sstring::operator<(const sstring &that) {

@@ -16,18 +16,19 @@ def score(freq, length):
 word_list = []
 
 for f in txtfiles:
-	file_handle = open(f, 'r')
-	string = file_handle.read()
-	word_list.extend([w for w in re.split('\W', string) if w])
+    file_handle = open(f, 'r')
+    string = file_handle.read()
+    word_list.extend([w for w in re.split('\W', string) if w])
 
+# Get each word's frequency
 word_freq = {}
-
 for word in word_list:
-	if word in word_freq:
-		word_freq[word] += 1
-	else:
-		word_freq[word] = 1
+    if word in word_freq:
+        word_freq[word] += 1
+    else:
+        word_freq[word] = 1
 
+# Score each word based on frequency and length
 word_score = {}
 for word in word_freq.keys():
     word_score[word] = score(word_freq[word], len(word))
