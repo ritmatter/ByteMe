@@ -31,8 +31,8 @@ compressed.
 
 ## Example Code
 
-Take a look at code samples in [compressor.cpp][compressor.cpp],
-[concat.cpp][concat.cpp], and [compare.cpp][compare.cpp]!
+Take a look at code samples in [compressor.cpp](compressor.cpp),
+[concat.cpp](concat.cpp), and [compare.cpp](compare.cpp)!
 
 ## Compression Scheme
 
