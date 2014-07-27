@@ -29,6 +29,11 @@ character words are also left uncompressed, since they would not be made
 smaller. Additionally addition, substrings of words that are not common will be
 compressed. 
 
+## Example Code
+
+Take a look at code samples in [compressor.cpp][compressor.cpp],
+[concat.cpp][concat.cpp], and [compare.cpp][compare.cpp]!
+
 ## Compression Scheme
 
 Our schema involves two different lookup tables. The first contains the 64
