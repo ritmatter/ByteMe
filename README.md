@@ -1,4 +1,5 @@
-# ByteMe : a homomorphic compression scheme
+# ByteMe
+## A Homomorphic Compression Scheme
 
 #### Anish Athalye, Nikihl Buduma, Matt Ritter
 ##### Palantir Hackathon, 7/26/14
@@ -36,7 +37,7 @@ The second contains the next 16,384 highest priority words. The rest of the
 words we encounter are placed under the category of printable ASCII. This three
 categories allow us to create an encoding scheme like so:
 
-### Byte Boundaries
+## Byte Boundaries
  
 ```
 |------| |------|
@@ -58,11 +59,11 @@ applies to the second priority words.
 
 ## Compression Analysis
 
-TITLE                 |  GZIP  |  ByteMe |
-——————————————————————+————————+—————————+
-Pride and Prejudice   |   36%  |   51%   |
-The Scarlet Letter    |   39%  |   54%   |
-2BR02B                |   44%  |   56%   |
+| TITLE                |  GZIP  |  ByteMe |
+|----------------------|--------|---------|
+| Pride and Prejudice  |   36%  |   51%   |
+| The Scarlet Letter   |   39%  |   54%   |
+| 2BR02B               |   44%  |   56%   |
 
 This trade-off in space more than makes up for itself with the advantage of
 homomorphic compression. Compressed strings can be compared, concatenated, and
