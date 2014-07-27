@@ -2,18 +2,20 @@
 #include "word_maps.hpp"
 
 #include <string>
+#include <utility>
 
-#ifdef DEBUG
-#include <iostream>
-#endif
-
-using namespace byteme;
+namespace byteme
+{
 
 sstring::sstring() {
 
 }
 
 sstring::sstring(std::string from) : sstring(from.c_str()) {
+
+}
+
+sstring::sstring(std::vector<char> &&from) : buf(from) {
 
 }
 
@@ -167,6 +169,19 @@ const char *sstring::data() {
     return buf.data();
 }
 
+sstring sstring::operator+(const sstring &that) {
+    std::vector<char> concatenated = buf;
+    concatenated.insert(concatenated.end(), that.buf.begin(), that.buf.end());
+    return sstring(std::move(concatenated));
+}
+
+std::ostream &operator<<(std::ostream &out, sstring &ss) {
+    out << ss.decode();
+    return out;
+}
+
 sstring::~sstring() {
+
+}
 
 }

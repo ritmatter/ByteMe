@@ -1,5 +1,6 @@
 # Main binary output
-main
+compressor
+concat
 
 # Object files
 *.o

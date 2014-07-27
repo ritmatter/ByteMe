@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <cstdio>
 
 using namespace byteme;
 using namespace std;

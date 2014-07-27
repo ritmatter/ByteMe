@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
+#include <iostream>
 
 #ifdef DEBUG
 #include <cassert>
@@ -40,9 +41,15 @@ public:
 
     sstring(const char *from, size_t length);
 
+    sstring(std::vector<char> &&from);
+
     std::string decode();
 
     static std::string decode(const char *from, size_t length);
+
+    sstring operator+(const sstring &that);
+
+    friend std::ostream &operator<<(std::ostream &out, sstring &ss);
 
     ~sstring();
 
