@@ -517,7 +517,7 @@ sstring sstring::substr(size_t position, size_t length) {
         }
     }
 
-    while(output.size() < length){
+    while(output.size() < length && here < buf.size()){
         char left = buf[here];
         if((left & 0xff) >> 6 == 0x03){
             int index = ((static_cast<int>(left & 0x3f) & 0xff) << 8) | (static_cast<int>(buf[here + 1]) & 0xff);
