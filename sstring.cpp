@@ -484,6 +484,7 @@ bool sstring::operator<=(const sstring &that){
 }
 
 sstring sstring::substr(size_t position, size_t length) {
+
     size_t here = 0;
     size_t count = 0;
     std::vector<char> output;
