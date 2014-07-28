@@ -233,7 +233,6 @@ bool sstring::operator<(const sstring &that) {
             const std::string &lstr = short_decode_array[index];
             if (hs >= lstr.size()) {
                 hs = 0;
-                here++;
                 cont = true;
                 cont_here_incr = 1;
             } else {
@@ -249,7 +248,6 @@ bool sstring::operator<(const sstring &that) {
             const std::string &lstr = long_decode_array[index];
             if (hs >= lstr.size()) {
                 hs = 0;
-                here += 2;
                 cont = true;
                 cont_here_incr = 2;
             } else {
@@ -278,7 +276,6 @@ bool sstring::operator<(const sstring &that) {
             const std::string &rstr = short_decode_array[index];
             if (ts >= rstr.size()) {
                 ts = 0;
-                there++;
                 cont = true;
                 cont_there_incr = 1;
             } else {
@@ -294,7 +291,6 @@ bool sstring::operator<(const sstring &that) {
             const std::string rstr = long_decode_array[index];
             if (ts >= rstr.size()) {
                 ts = 0;
-                there += 2;
                 cont = true;
                 cont_there_incr = 2;
             } else {
@@ -382,7 +378,6 @@ bool sstring::operator==(const sstring &that) {
             const std::string &lstr = short_decode_array[index];
             if (hs >= lstr.size()) {
                 hs = 0;
-                here++;
                 cont = true;
                 cont_here_incr = 1;
             } else {
@@ -398,7 +393,6 @@ bool sstring::operator==(const sstring &that) {
             const std::string &lstr = long_decode_array[index];
             if (hs >= lstr.size()) {
                 hs = 0;
-                here += 2;
                 cont = true;
                 cont_here_incr = 2;
             } else {
@@ -427,7 +421,6 @@ bool sstring::operator==(const sstring &that) {
             const std::string &rstr = short_decode_array[index];
             if (ts >= rstr.size()) {
                 ts = 0;
-                there++;
                 cont = true;
                 cont_there_incr = 1;
             } else {
@@ -443,7 +436,6 @@ bool sstring::operator==(const sstring &that) {
             const std::string rstr = long_decode_array[index];
             if (ts >= rstr.size()) {
                 ts = 0;
-                there += 2;
                 cont = true;
                 cont_there_incr = 2;
             } else {
